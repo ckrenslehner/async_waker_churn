@@ -36,14 +36,15 @@ impl Signal {
 type SyncSignal = ThreadModeMutex<Signal>;
 
 async fn signal_wait(signal: &SyncSignal, current_state: State) {
-    poll_fn(|cx| {
+    let mut counter = 0;
+
+    poll_fn(move |cx| {
         signal.lock(|s| {
             if s.state.get() != current_state {
-                info!("Signal is ready");
+                info!("Signal is ready. Number of polls: {}", counter);
                 Poll::Ready(())
             } else {
-                let new_waker_address = cx.waker().data() as *const _ as usize;
-                trace!("New waker address: {}", new_waker_address);
+                counter += 1;
                 s.waker_registration.borrow_mut().register(cx.waker());
                 Poll::Pending
             }
@@ -62,7 +63,7 @@ async fn main(spawner: Spawner) {
     let signal = SIGNAL.init(ThreadModeMutex::new(Signal::new()));
     let mut counter = 0;
 
-    spawner.must_spawn(wait_for_signal("TaskTwo", signal, true));
+    // spawner.must_spawn(wait_for_signal("TaskTwo", signal, true));
     spawner.must_spawn(wait_for_signal("TaskOne", signal, false));
 
     loop {

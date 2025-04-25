@@ -7,7 +7,7 @@ The repository contains five different versions and tests them.
 The following versions are tested:
 - Naive implementation which only stores one Waker -> Only the task gets polled which registers its waker last.
 - Implementation using `embassy_sync::waitqueue::AtomicWaker` -> Only calls one of the tasks, as `will_wake` detects that it's the same task. Edge case because the task behavior is dependent on given arguments.
-- Implementation using `embassy_sync::waitqueue::WakerRegistration` -> Gets stuck in a `.wake()` loop between two tasks.
+- Implementation using `embassy_sync::waitqueue::WakerRegistration` ->  Works but required a lot of polls of the `poll_fn` because the two tasks fight for the waker.
 - Implementation using `embassy_sync::waitqueue::MultiWakerRegistration` -> All tasks are woken up
 - Implementation using `maitake_sync::WaitQueue` -> All tasks are woken up
 
