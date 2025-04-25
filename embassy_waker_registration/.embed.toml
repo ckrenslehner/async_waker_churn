@@ -1,0 +1,16 @@
+# Configuration reference for the `cargo embed` command.
+# https://github.com/probe-rs/probe-rs/blob/master/probe-rs-tools/src/bin/probe-rs/cmd/cargo_embed/config/default.toml
+
+[default.general]
+chip = "STM32WB55RGVx"
+
+[default.rtt]
+enabled = true
+
+up_channels = [
+    { channel = 0, mode = "BlockIfFull", format = "Defmt", show_location = true, show_timestamp = true },
+]
+
+# show_location (Optional) - Whether to show the location of defmt messages in the UI.
+# show_timestamps (Optional) - Whether to show the timestamps of String and Defmt messages in the UI, if available.
+

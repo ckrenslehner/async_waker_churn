@@ -1,0 +1,12 @@
+# The target needs to be specified here in this file
+# If there is a need for switching targets depending on a feature, this can be done here as well
+
+[target.'cfg(all(target_arch = "arm", target_os = "none"))']
+runner = "probe-rs run --chip STM32WB55RGVx"
+linker = "flip-link"
+
+[build]
+target = "thumbv7em-none-eabihf"
+
+[env]
+DEFMT_LOG = "trace"
