@@ -36,15 +36,15 @@ impl Signal {
 type SyncSignal = ThreadModeMutex<Signal>;
 
 async fn signal_wait(signal: &SyncSignal, current_state: State) {
-    poll_fn(|cx| {
-        trace!("Running waker with address: {:?}", cx.waker().data());
+    let mut counter = 0;
 
+    poll_fn(move |cx| {
         signal.lock(|s| {
             if s.state.get() != current_state {
-                info!("Signal is ready");
+                info!("Signal is ready. Number of polls: {}", counter);
                 Poll::Ready(())
             } else {
-                info!("Signal not ready, registering waker");
+                counter += 1;
                 s.waker_registration.register(cx.waker());
                 Poll::Pending
             }
@@ -53,9 +53,8 @@ async fn signal_wait(signal: &SyncSignal, current_state: State) {
     .await;
 }
 
-/// This __still__ does not work.. but why?
-/// -> `will_wake` sees, that the waker will wake the same task and therefore, does not call the other task
-/// even though the behavior of the tasks is different because of the passed arguments
+/// The `AtomicWaker` is intentionally not designed for waking multiple tasks, but rather for waking a task from an interrupt.
+/// As visible in this example, only one task will be woken up repeatedly.
 #[embassy_executor::main]
 async fn main(spawner: Spawner) {
     let _p = embassy_stm32::init(Default::default());

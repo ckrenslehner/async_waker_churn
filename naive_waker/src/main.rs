@@ -28,9 +28,8 @@ struct Signal {
 type SyncSignal = ThreadModeMutex<Signal>;
 
 async fn signal_wait(signal: &SyncSignal, current_state: State) {
-    trace!("Running waker with address: {:?}", cx.waker().data());
-
     poll_fn(|cx| {
+        trace!("Running waker with address: {:?}", cx.waker().data());
         signal.lock(|s| {
             if s.state.get() != current_state {
                 info!("Signal is ready");
@@ -93,7 +92,7 @@ async fn wait_for_signal(name: &'static str, signal: &'static SyncSignal, odd: b
             }
             _ => {}
         }
-        
+
         signal_wait(signal, current_state).await;
     }
 }

@@ -63,7 +63,7 @@ async fn main(spawner: Spawner) {
     let signal = SIGNAL.init(ThreadModeMutex::new(Signal::new()));
     let mut counter = 0;
 
-    // spawner.must_spawn(wait_for_signal("TaskTwo", signal, true));
+    spawner.must_spawn(wait_for_signal("TaskTwo", signal, true));
     spawner.must_spawn(wait_for_signal("TaskOne", signal, false));
 
     loop {
