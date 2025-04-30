@@ -4,6 +4,7 @@
         "embassy_atomic_waker/Cargo.toml",
         "embassy_waker_registration/Cargo.toml",
         "embassy_multi_waker_registration/Cargo.toml",
-        "maitake_wait_queue/Cargo.toml"
+        "maitake_wait_queue/Cargo.toml",
+        "maitake_wait_queue_peripheral/Cargo.toml",
     ],
 }
