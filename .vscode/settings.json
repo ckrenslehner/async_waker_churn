@@ -1,5 +1,6 @@
 {
     "rust-analyzer.linkedProjects": [
+        "blinky/Cargo.toml",
         "naive_waker/Cargo.toml",
         "embassy_atomic_waker/Cargo.toml",
         "embassy_waker_registration/Cargo.toml",

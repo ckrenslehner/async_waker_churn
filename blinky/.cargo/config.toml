@@ -1,0 +1,17 @@
+# The target needs to be specified here in this file
+# If there is a need for switching targets depending on a feature, this can be done here as well
+
+[target.'cfg(all(target_arch = "arm", target_os = "none"))']
+# Configures what happens if you run `cargo run`
+runner = "probe-rs run --chip STM32WB55RGVx"
+
+# Flip link is a custom linker which flips the stack direction to detect stack overflows.
+# https://github.com/knurling-rs/flip-link
+linker = "flip-link"
+
+[build]
+target = "thumbv7em-none-eabihf"
+
+[env]
+# Build time log level setting for defmt
+DEFMT_LOG = "trace"
