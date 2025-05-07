@@ -2,7 +2,7 @@
 #![cfg_attr(not(test), no_std)]
 
 // Derive the Format trait for defmt if the defmt feature is enabled
-#[cfg_attr(feature = "defmt", derive(defmt::Format))]
+#[cfg_attr(not(test), derive(defmt::Format))]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct SharedType {
     id: u8,

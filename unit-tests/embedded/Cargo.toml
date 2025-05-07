@@ -32,7 +32,7 @@ rtt-target = { version = "0.6", features = ["defmt"] }
 
 
 [dependencies]
-host = { path = "../host", features = ["defmt"] }
+host = { path = "../host" }
 embedded-alloc = "0.6.0"
 
 # Logging facette as alternative to `log` crate
@@ -54,6 +54,7 @@ embassy-stm32 = { version = "0.2.0", features = [
     "time-driver-any",
     "memory-x",
     "exti",
+    # "defmt"
 ] }
 
 # Syncronization primitives of embassy. E.g. `Mutex`, `Channel`, etc.
