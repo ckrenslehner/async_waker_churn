@@ -8,7 +8,7 @@ chip = "STM32WB55RGVx"
 enabled = true
 
 up_channels = [
-    { channel = 0, mode = "BlockIfFull", format = "Defmt", show_location = true, show_timestamp = true },
+    { channel = 0, mode = "BlockIfFull", format = "Defmt", show_location = false, show_timestamp = true },
 ]
 
 # show_location (Optional) - Whether to show the location of defmt messages in the UI.
