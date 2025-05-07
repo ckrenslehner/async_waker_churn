@@ -1,0 +1,12 @@
+[package]
+name = "host"
+version = "0.1.0"
+edition = "2024"
+
+[features]
+defmt = ["dep:defmt"]
+
+[dependencies]
+postcard = { version = "1", features = ["alloc"] }
+serde = { version = "1", default-features = false }
+defmt = { version = "0.3", optional = true }

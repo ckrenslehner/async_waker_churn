@@ -1,0 +1,131 @@
+[package]
+name = "embedded"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+# Disable default test harness
+name = "embedded"
+test = false
+harness = false
+
+[lib]
+# Disable default test harness
+name = "library"
+test = false
+harness = false
+
+[[test]]
+# Disable default test harness for our test files. If there are multiple files, we need to add them here.
+name = "transform_shared"
+harness = false
+
+[dev-dependencies]
+# Uses a version of the embassy executor to kick off a runtime for testing.
+# This crate uses an upstream version of embassy (the one published on crates.io). 
+# So to support the use of a custom version of embassy, there are two options:
+# - Use the patches section to point to a custom version of embassy.
+# - Set the executor manually via `#[embedded_test::tests(executor=<CUSTOM EXECUTOR>)]`.
+# See https://github.com/probe-rs/embedded-test/wiki/FAQ-and-common-Errors
+embedded-test = { version = "0.6", features = ["embassy"] }
+rtt-target = { version = "0.6", features = ["defmt"] }
+
+
+[dependencies]
+host = { path = "../host", features = ["defmt"] }
+embedded-alloc = "0.6.0"
+
+# Logging facette as alternative to `log` crate
+defmt = "1.0.1"
+
+# Logging implementation specifically for the defmt facette which logs to segger rtt.
+# There are lots of different logging implementations. E.g. https://crates.io/crates/rtt-target 
+defmt-rtt = { version = "0.3.0" }
+
+# The executor is responsible for scheduling tasks and managing the execution of async code.
+embassy-executor = { version = "0.7.0", features = [
+    "arch-cortex-m",
+    "executor-thread",
+] }
+
+# The hardware abstraction layer (HAL) for the STM32 microcontroller family.
+embassy-stm32 = { version = "0.2.0", features = [
+    "stm32wb55rg",
+    "time-driver-any",
+    "memory-x",
+    "exti",
+] }
+
+# Syncronization primitives of embassy. E.g. `Mutex`, `Channel`, etc.
+embassy-sync = { version = "0.6.2", features = [] }
+
+# Timer and Duration types for time keeping. Needs a `time-driver` to work.
+# The `time-driver` is responsible for providing a time source based on e.g. a timer or a RTC.
+# Similar to the logging, time keeping is also separated into a facette and an implementation.
+embassy-time = { version = "0.4.0", features = [
+    "tick-hz-32_768",
+    "generic-queue-8",
+] }
+
+# A custom panic handler for embedded systems. Prints the panic message to the RTT console.
+# There are lots of useful panic handler alternatives. E.g. https://crates.io/crates/panic-persist
+panic-probe = { version = "0.3", features = ["print-defmt"] }
+
+# Access to core peripherals and core registers of cortex-m microcontrollers.
+# Also provides a critical section implementation.
+cortex-m = { version = "0.7.6", features = [
+    "inline-asm",
+    "critical-section-single-core",
+] }
+
+# Basic runtimte support for cortex-m microcontrollers. Includes linker script `link.x` which requires the user to provide the memory map `memory.x`.
+# Here is also the startup code which copies the `.bss` and `.data` sections from flash to RAM and therefore intitializes the static variables.
+cortex-m-rt = "0.7.0"
+
+# Provides an easy way to create a and init a static variable as part of the setup code. So everytime when a 'static lifteime is required, this crate can be used for it.
+static_cell = { version = "2.1" }
+
+# Critical section crate. This acts as a `token` which can be used in the parameter of a function and therefore says that this function can only be called from within a critical section.
+# The token is provided by a critical section implementation
+critical-section = "1.2.0"
+
+## Profiles which set the optimization level and other settings for different build types.
+## This could also be part of `Config.toml`
+
+# cargo build/run
+[profile.dev]
+codegen-units = 1
+debug = 2
+debug-assertions = true # <-
+incremental = false
+opt-level = 'z'         # <-
+overflow-checks = true  # <-
+
+# cargo test
+[profile.test]
+codegen-units = 1
+debug = 2
+debug-assertions = true # <-
+incremental = false
+opt-level = 3           # <-
+overflow-checks = true  # <-
+
+# cargo build/run --release
+[profile.release]
+codegen-units = 1
+debug = 2
+debug-assertions = false # <-
+incremental = false
+lto = 'fat'
+opt-level = 3            # <-
+overflow-checks = false  # <-
+
+
+# Patches for embassy dependencies. Useful if we want to have a custom embassy version
+# Also needed if you still want to use embedded-test
+[patch.crates-io]
+embassy-executor = { git = "https://github.com/ckrenslehner/embassy.git", branch = "fix/handle-cpu2-when-entering-sleep" }
+embassy-sync = { git = "https://github.com/ckrenslehner/embassy.git", branch = "fix/handle-cpu2-when-entering-sleep" }
+embassy-time = { git = "https://github.com/ckrenslehner/embassy.git", branch = "fix/handle-cpu2-when-entering-sleep" }
+embassy-futures = { git = "https://github.com/ckrenslehner/embassy.git", branch = "fix/handle-cpu2-when-entering-sleep" }
+embassy-stm32 = { git = "https://github.com/ckrenslehner/embassy.git", branch = "fix/handle-cpu2-when-entering-sleep" }

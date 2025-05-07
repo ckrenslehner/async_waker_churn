@@ -179,7 +179,7 @@ async fn main(spawner: Spawner) {
     static CELL: StaticCell<OnDemandOutput<'static>> = StaticCell::new();
 
     let on_demand = CELL.init(OnDemandOutput::new(
-        p.PD0.degrade(),
+        p.PD0,
         embassy_stm32::gpio::Level::Low,
         embassy_stm32::gpio::Speed::Low,
     ));
